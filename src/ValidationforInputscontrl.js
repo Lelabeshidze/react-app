@@ -12,6 +12,7 @@ const ValidationforInputscontrl = () => {
 	const [formErrors, setFormErrors] = useState({});
 	const [isFormValid, setFormValid] = useState(false);
 	const [userList,setUserList] = useState([])
+	const [userUpdate, setUserUpdate] = useState(false);
 	const handleOnChange = (e) => {
 		const { name, value } = e.target;
 		setFormValues({
@@ -22,10 +23,23 @@ const ValidationforInputscontrl = () => {
 	const handleOnSubmit = (e) => {
 		e.preventDefault();
 		console.log("submitted", formValues);
-		setUserList( (prevUserList) =>{
+		if(userUpdate) {
+			const userIndex = userList.findIndex((user) => user.id === formValues.id);
+			const newUserList = [...userList];
+			newUserList[userIndex] = formValues;
+			setUserList(newUserList);}
+		else {setUserList( (prevUserList) =>{
 			return [...prevUserList,{...formValues, id: new Date().toString()}]
 		})
-        
+	}
+	setFormValues({
+		name: "",
+		surname: "",
+		email: "",
+		age: "",
+		gender: "",
+	});
+	setUserUpdate(false)
 	};
 
 	useEffect(() => {
@@ -65,6 +79,17 @@ const ValidationforInputscontrl = () => {
 			errors.gender = "Gender is required";
 		}
 		return errors;
+	};
+	const update = (id) => {
+		const user = userList.find((user) => user.id === id);
+        setFormValues({
+            name: user.name,
+            surname: user.surname,
+            email: user.email,
+            age: user.age,
+            gender: user.gender,
+            id: id
+        })
 	};
 	return (
 		<div>
@@ -163,6 +188,7 @@ const ValidationforInputscontrl = () => {
                 <h1> email- {user.email}</h1>
                 <h1>age-{user.age}</h1>
                 <h1> gender-{user.gender}</h1>
+				<button onClick={() => {update(user.id);setUserUpdate(true)}}>Update User</button>
             </React.Fragment>
             )
         })}

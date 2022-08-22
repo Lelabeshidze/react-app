@@ -1,7 +1,13 @@
 import React, { useRef, useState } from "react";
 
-
 const Uncontrolled = () => {
+	const [formValues, setFormValues] = useState({
+		name: "",
+		surname: "",
+		email: "",
+		age: "",
+		gender: "",
+	});
 	const nameRef = useRef(undefined);
 	const surnameRef = useRef(undefined);
 	const emailRef = useRef(undefined);
@@ -9,15 +15,15 @@ const Uncontrolled = () => {
 	const genderRef = useRef(undefined);
 	const [formErrors, setFormErrors] = useState({});
 	const [userList, setUserList] = useState([]);
+	const [userUpdate, setUserUpdate] = useState(false);
 	const handleOnSubmit = (e) => {
 		e.preventDefault();
-		const name = nameRef.current.value;
-		const surname = surnameRef.current.value;
-		const email = emailRef.current.value;
-		const age = ageRef.current.value;
-		const gender = genderRef.current.value;
-		const userData = { name, surname, email, age, gender };
-		const validationResult = validate(userData);
+		formValues.name = nameRef.current.value;
+		formValues.surname = surnameRef.current.value;
+		formValues.email = emailRef.current.value;
+		formValues.age = ageRef.current.value;
+		formValues.gender = genderRef.current.value;
+		const validationResult = validate(formValues);
 		if (
 			validationResult.name ||
 			validationResult.surname ||
@@ -26,12 +32,25 @@ const Uncontrolled = () => {
 			validationResult.gender
 		) {
 			setFormErrors(validationResult);
+		} else if (userUpdate) {
+			const userIndex = userList.findIndex((user) => user.id === formValues.id);
+			const newUserList = [...userList];
+			newUserList[userIndex] = formValues;
+			setUserList(newUserList);
 		} else {
-			console.log("submitted", userData);
+			console.log("submitted", formValues);
 			setUserList((prevUserList) => {
-				return [...prevUserList, { ...userData, id: new Date().toString() }];
+				return [...prevUserList, { ...formValues, id: new Date().toString() }];
 			});
 		}
+		setFormValues({
+			name: "",
+			surname: "",
+			email: "",
+			age: "",
+			gender: "",
+		});
+        setUserUpdate(false)
 	};
 	const validate = (values) => {
 		const errors = {};
@@ -55,6 +74,17 @@ const Uncontrolled = () => {
 			errors.gender = "Gender is required";
 		}
 		return errors;
+	};
+	const update = (id) => {
+		const user = userList.find((user) => user.id === id);
+        setFormValues({
+            name: user.name,
+            surname: user.surname,
+            email: user.email,
+            age: user.age,
+            gender: user.gender,
+            id: id
+        })
 	};
 	return (
 		<div>
@@ -130,8 +160,6 @@ const Uncontrolled = () => {
 				</h4>
 				<button>Add User</button>
 			</form>
-			<button>Delete User</button>
-			<button>Update User</button>
 			{userList.map((user) => {
 				return (
 					<React.Fragment key={user.id}>
@@ -140,10 +168,11 @@ const Uncontrolled = () => {
 						<h1> email- {user.email}</h1>
 						<h1>age-{user.age}</h1>
 						<h1> gender-{user.gender}</h1>
+						<button>Delete User</button>
+            <button onClick={() => {update(user.id);setUserUpdate(true)}}>Update User</button>
 					</React.Fragment>
 				);
 			})}
-            
 		</div>
 	);
 };
