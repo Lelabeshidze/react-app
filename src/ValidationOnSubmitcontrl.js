@@ -1,7 +1,5 @@
 import React from "react";
 import { useState } from "react";
-import AddUser from "./AddUser";
-
 const ValidationOnSubmitcontrl = () => {
 	const userData = { name: "", surname: "", email: "", age: "", gender: "" };
 

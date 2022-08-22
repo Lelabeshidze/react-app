@@ -46,7 +46,7 @@ const ValidationforInputscontrl = () => {
 			setFormValid(true);
 		}
 	}, [formValues]);
-	console.log(isFormValid)
+
 	const validate = (values) => {
 		const errors = {};
 		if (values.name && values.name.length < 4) {
