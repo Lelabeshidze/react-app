@@ -1,12 +1,14 @@
 import React from "react";
 import { useState } from "react";
+import AddUser from "./AddUser";
 
-const Validation = () => {
+const ValidationOnSubmitcontrl = () => {
 	const userData = { name: "", surname: "", email: "", age: "", gender: "" };
 
 	const [formValues, setFormValues] = useState(userData);
 	const [formErrors, setFormErrors] = useState({});
 	const [onSubmit, setOnSubmit] = useState(false);
+	const [userList, setUserList] = useState([]);
 	const handleOnChange = (e) => {
 		const { name, value } = e.target;
 		setFormValues({
@@ -18,6 +20,10 @@ const Validation = () => {
 		e.preventDefault();
 		setFormErrors(validate(formValues));
 		setOnSubmit(true);
+        console.log(formValues)
+		setUserList((prevUserList) => {
+			return [...prevUserList, { ...formValues, id: new Date().toString() }];
+		});
 	};
 	const validate = (values) => {
 		const errors = {};
@@ -34,9 +40,9 @@ const Validation = () => {
 		if ( values.email &&!values.email.includes("@gmail.com")) {
 			errors.email = "This is not a valid email format";
 		}
-		if ( values.age && values.age.length < 18) {
+		if ( values.age && values.age < 18) {
 			errors.age = "Age must be 18+";
-		}
+		} 
 		if (!values.gender) {
 			errors.gender = "Gender is required";
 		}
@@ -118,12 +124,24 @@ const Validation = () => {
 					Female
 				</div>
 				<h4 style={{color:"red"}}>{formErrors.gender && <p>{formErrors.gender}</p>}</h4>
-				<button>Add User</button>
+				<button>Submit</button>
+				
 			</form>
 			<button>Delete User</button>
 			<button>Update User</button>
+			{userList.map((user) => {
+				return (
+					<React.Fragment key={user.id}>
+						<h1> username- {user.name}</h1>
+						<h1> surname-{user.surname}</h1>
+						<h1> email- {user.email}</h1>
+						<h1>age-{user.age}</h1>
+						<h1> gender-{user.gender}</h1>
+					</React.Fragment>
+				);
+			})}
 		</div>
 	);
 };
 
-export default Validation;
+export default ValidationOnSubmitcontrl;

@@ -1,13 +1,14 @@
 import logo from './logo.svg';
 import './App.css';
-import Form from './Form';
-import Validation from './Validation';
-
+import ValidationOnSubmitcontrl from './ValidationOnSubmitcontrl';
+import ValidationforInputscontrl from './ValidationforInputscontrl';
+import Uncontrolled from './Uncontrolled';
 function App() {
   return (
     <div className="App">
-      <Form/>
-      <Validation/>
+      {/* <ValidationOnSubmitcontrl/> */}
+      {/* <ValidationforInputscontrl/> */}
+    <Uncontrolled/>
     </div>
   );
 }
