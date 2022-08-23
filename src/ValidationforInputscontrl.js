@@ -38,12 +38,8 @@ const ValidationforInputscontrl = () => {
 			loginFormData.append("gender", formValues.gender)
 		  
 			try {
-			  const response = await axios({
-				method: "post",
-				url: "http://localhost:3001/users ",
-				data: loginFormData,
-				headers: { "Content-Type": "multipart/form-data" },
-			  });
+			  const response = await axios.post("http://localhost:3001/users");
+			  console.log(response);
 			} catch(error) {
 			  console.log(error)
 			}
@@ -129,26 +125,7 @@ const ValidationforInputscontrl = () => {
 		}
 		getData()
 	}, []);
-	const handleSubmit = async() => {
-		// store the states in the form data
-		const loginFormData = new FormData();
-		loginFormData.append("name", formValues.name)
-		loginFormData.append("surname", formValues.surname)
-		loginFormData.append("email", formValues.email)
-		loginFormData.append("age", formValues.age)
-		loginFormData.append("gender", formValues.gender)
-	  
-		try {
-		  // make axios post request
-		  const response = await axios({
-			method: "post",
-			url: "http://localhost:3001/users ",
-			data: loginFormData,
-			headers: { "Content-Type": "multipart/form-data" },
-		  });
-		} catch(error) {
-		  console.log(error)
-		}
+	
 	return (
 		<div>
 			<form onSubmit={handleOnSubmit}>
@@ -255,5 +232,5 @@ const ValidationforInputscontrl = () => {
 		</div>
 	);
 };
-}
+
 export default ValidationforInputscontrl;
