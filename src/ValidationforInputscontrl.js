@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-
+import axios from "axios";
 const ValidationforInputscontrl = () => {
 	const [formValues, setFormValues] = useState({
 		name: "",
@@ -13,6 +13,10 @@ const ValidationforInputscontrl = () => {
 	const [isFormValid, setFormValid] = useState(false);
 	const [userList,setUserList] = useState([])
 	const [userUpdate, setUserUpdate] = useState(false);
+	const [deleteUser,setDelete] = useState(formValues);
+	const [loading,setLoading] = useState(false);
+	const [error,setError] = useState(null);
+	const [data,setData] = useState([])
 	const handleOnChange = (e) => {
 		const { name, value } = e.target;
 		setFormValues({
@@ -20,9 +24,29 @@ const ValidationforInputscontrl = () => {
 			[name]: value,
 		});
 	};
+
+
+	
 	const handleOnSubmit = (e) => {
 		e.preventDefault();
 		console.log("submitted", formValues);
+			const loginFormData = new FormData();
+			loginFormData.append("name", formValues.name)
+			loginFormData.append("surname", formValues.surname)
+			loginFormData.append("email", formValues.email)
+			loginFormData.append("age", formValues.age)
+			loginFormData.append("gender", formValues.gender)
+		  
+			try {
+			  const response = await axios({
+				method: "post",
+				url: "http://localhost:3001/users ",
+				data: loginFormData,
+				headers: { "Content-Type": "multipart/form-data" },
+			  });
+			} catch(error) {
+			  console.log(error)
+			}
 		if(userUpdate) {
 			const userIndex = userList.findIndex((user) => user.id === formValues.id);
 			const newUserList = [...userList];
@@ -91,6 +115,40 @@ const ValidationforInputscontrl = () => {
             id: id
         })
 	};
+	useEffect(() => {
+		const getData = async () => {
+			try{
+				setLoading(false);
+				const {data} = await axios.get("http://localhost:3001/users");
+				setLoading(false);
+				setData(data);
+			}catch(error){
+				setLoading(false);
+				setError(error);
+			}
+		}
+		getData()
+	}, []);
+	const handleSubmit = async() => {
+		// store the states in the form data
+		const loginFormData = new FormData();
+		loginFormData.append("name", formValues.name)
+		loginFormData.append("surname", formValues.surname)
+		loginFormData.append("email", formValues.email)
+		loginFormData.append("age", formValues.age)
+		loginFormData.append("gender", formValues.gender)
+	  
+		try {
+		  // make axios post request
+		  const response = await axios({
+			method: "post",
+			url: "http://localhost:3001/users ",
+			data: loginFormData,
+			headers: { "Content-Type": "multipart/form-data" },
+		  });
+		} catch(error) {
+		  console.log(error)
+		}
 	return (
 		<div>
 			<form onSubmit={handleOnSubmit}>
@@ -189,11 +247,13 @@ const ValidationforInputscontrl = () => {
                 <h1>age-{user.age}</h1>
                 <h1> gender-{user.gender}</h1>
 				<button onClick={() => {update(user.id);setUserUpdate(true)}}>Update User</button>
+				{/* <button onClick={() => userDelete(user.id)}>Delete user</button> */}
+
             </React.Fragment>
             )
         })}
 		</div>
 	);
 };
-
+}
 export default ValidationforInputscontrl;
