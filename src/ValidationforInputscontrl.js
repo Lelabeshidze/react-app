@@ -27,7 +27,7 @@ const ValidationforInputscontrl = () => {
 
 
 	
-	const handleOnSubmit = (e) => {
+	const handleOnSubmit = async (e) => {
 		e.preventDefault();
 		console.log("submitted", formValues);
 			const loginFormData = new FormData();
