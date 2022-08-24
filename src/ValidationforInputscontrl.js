@@ -11,12 +11,12 @@ const ValidationforInputscontrl = () => {
 	});
 	const [formErrors, setFormErrors] = useState({});
 	const [isFormValid, setFormValid] = useState(false);
-	const [userList,setUserList] = useState([])
+	const [userList, setUserList] = useState([]);
 	const [userUpdate, setUserUpdate] = useState(false);
-	const [deleteUser,setDelete] = useState(formValues);
-	const [loading,setLoading] = useState(false);
-	const [error,setError] = useState(null);
-	const [data,setData] = useState([])
+	const [deleteUser, setDelete] = useState(formValues);
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState(null);
+	const [data, setData] = useState([]);
 	const handleOnChange = (e) => {
 		const { name, value } = e.target;
 		setFormValues({
@@ -25,41 +25,43 @@ const ValidationforInputscontrl = () => {
 		});
 	};
 
-
-	
 	const handleOnSubmit = async (e) => {
 		e.preventDefault();
 		console.log("submitted", formValues);
-			const loginFormData = new FormData();
-			loginFormData.append("name", formValues.name)
-			loginFormData.append("surname", formValues.surname)
-			loginFormData.append("email", formValues.email)
-			loginFormData.append("age", formValues.age)
-			loginFormData.append("gender", formValues.gender)
-		  
+		const loginFormData = new FormData();
+		loginFormData.append("name", formValues.name);
+		loginFormData.append("surname", formValues.surname);
+		loginFormData.append("email", formValues.email);
+		loginFormData.append("age", formValues.age);
+		loginFormData.append("gender", formValues.gender);
+		loginFormData.append("id", new Date().toString());
+
+		if (loginFormData) {
 			try {
-			  const response = await axios.post("http://localhost:3001/users");
-			  console.log(response);
-			} catch(error) {
-			  console.log(error)
+				const response = await axios.post("http://localhost:3001/users");
+				console.log(response);
+			} catch (error) {
+				console.log(error);
 			}
-		if(userUpdate) {
-			const userIndex = userList.findIndex((user) => user.id === formValues.id);
-			const newUserList = [...userList];
-			newUserList[userIndex] = formValues;
-			setUserList(newUserList);}
-		else {setUserList( (prevUserList) =>{
-			return [...prevUserList,{...formValues, id: new Date().toString()}]
-		})
-	}
-	setFormValues({
-		name: "",
-		surname: "",
-		email: "",
-		age: "",
-		gender: "",
-	});
-	setUserUpdate(false)
+		} else if (userUpdate) {
+			await axios.post(` http://localhost:3001/users/${loginFormData.id}`);
+		} else {
+			await axios.post("http://localhost:3001/users");
+		}
+		await axios.get("http://localhost:3001/users");
+
+		// else {setUserList( (prevUserList) =>{
+		// 	return [...prevUserList,{...formValues, id: new Date().toString()}]
+		// })
+
+		setFormValues({
+			name: "",
+			surname: "",
+			email: "",
+			age: "",
+			gender: "",
+		});
+		setUserUpdate(false);
 	};
 
 	useEffect(() => {
@@ -100,32 +102,25 @@ const ValidationforInputscontrl = () => {
 		}
 		return errors;
 	};
-	const update = (id) => {
-		const user = userList.find((user) => user.id === id);
-        setFormValues({
-            name: user.name,
-            surname: user.surname,
-            email: user.email,
-            age: user.age,
-            gender: user.gender,
-            id: id
-        })
-	};
+	const update = () => {
+		setFormValues ( (prevUser) =>{
+					return [...prevUser,formValues]})
+		}
 	useEffect(() => {
 		const getData = async () => {
-			try{
+			try {
 				setLoading(false);
-				const {data} = await axios.get("http://localhost:3001/users");
+				const { data } = await axios.get("http://localhost:3001/users");
 				setLoading(false);
 				setData(data);
-			}catch(error){
+			} catch (error) {
 				setLoading(false);
 				setError(error);
 			}
-		}
-		getData()
+		};
+		getData();
 	}, []);
-	
+
 	return (
 		<div>
 			<form onSubmit={handleOnSubmit}>
@@ -216,19 +211,25 @@ const ValidationforInputscontrl = () => {
 			<button>Delete User</button>
 			<button>Update User</button>
 			{userList.map((user) => {
-            return (
-            <React.Fragment key={user.id}>
-                <h1> username- {user.name}</h1>
-                <h1> surname-{user.surname}</h1>
-                <h1> email- {user.email}</h1>
-                <h1>age-{user.age}</h1>
-                <h1> gender-{user.gender}</h1>
-				<button onClick={() => {update(user.id);setUserUpdate(true)}}>Update User</button>
-				{/* <button onClick={() => userDelete(user.id)}>Delete user</button> */}
-
-            </React.Fragment>
-            )
-        })}
+				return (
+					<React.Fragment key={user.id}>
+						<h1> username- {user.name}</h1>
+						<h1> surname-{user.surname}</h1>
+						<h1> email- {user.email}</h1>
+						<h1>age-{user.age}</h1>
+						<h1> gender-{user.gender}</h1>
+						<button
+							onClick={() => {
+								update(user.id);
+								setUserUpdate(true);
+							}}
+						>
+							Update User
+						</button>
+						{/* <button onClick={() => userDelete(user.id)}>Delete user</button> */}
+					</React.Fragment>
+				);
+			})}
 		</div>
 	);
 };
